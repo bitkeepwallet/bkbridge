@@ -48,7 +48,7 @@ contract BKBridgeAccess is IBKBridgeAccess, IBKBridgeErrors, Ownable, Pausable, 
         _;
     }
 
-    function setAccess(AccessType _accessType, bytes calldata _inputs) external onlyOwner whenNotPaused {
+    function setAccess(AccessType _accessType, bytes calldata _inputs) external onlyOwner {
         if (_accessType > AccessType.SET_ROUTERS) {
             revert AccessTypeNotAvailable();
         }
@@ -159,13 +159,21 @@ contract BKBridgeAccess is IBKBridgeAccess, IBKBridgeErrors, Ownable, Pausable, 
         }
     }
 
-    function _checkVault(address _vaultReceiver, address _vaultToken) internal view {
+    function _checkVaultToken(address _vaultToken) internal view {
+        if (_vaultToken != vaultToken) {
+            revert NotVaultToken();
+        }
+    }
+
+    function _checkVaultReceiver(address _vaultReceiver) internal view {
         if (_vaultReceiver != vault) {
             revert NotVault();
         }
+    }
 
-        if (_vaultToken != vaultToken) {
-            revert NotVaultToken();
+    function _checkSwapReceiver(address _targetReceiver, address _swapReceiver) internal pure {
+        if (_targetReceiver != _swapReceiver) {
+            revert SwapReceiverMisMatch();
         }
     }
 
@@ -178,7 +186,7 @@ contract BKBridgeAccess is IBKBridgeAccess, IBKBridgeErrors, Ownable, Pausable, 
     function _checkSigner(uint256 _nonce, bytes calldata _signature) internal {
         _useUnorderedNonce(_nonce);
 
-        bytes32 msgHash = keccak256(abi.encodePacked(_nonce, block.chainid, address(this)));
+        bytes32 msgHash = keccak256(abi.encodePacked(_nonce, block.chainid, address(this), msg.sender));
 
         bytes32 finalMsgHash = msgHash.toEthSignedMessageHash();
 

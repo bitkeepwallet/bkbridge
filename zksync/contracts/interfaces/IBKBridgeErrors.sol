@@ -22,4 +22,5 @@ interface IBKBridgeErrors {
     error WrongRefundAmount();
     error WrongRelayAmount();
     error SwapInsuffenceOutPut();
+    error SwapReceiverMisMatch();
 }

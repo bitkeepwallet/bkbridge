@@ -42,13 +42,13 @@ struct SwapV1Info {
 
 struct SwapV2Info {
     address bkSwapV2Router;
-    address toTokenAddress;
-    uint256 minAmountOut;
     address fromTokenAddress;
+    address toTokenAddress;
+    address to;
     uint256 amountInTotal;
+    uint256 minAmountOut;
     bytes data;
 }
-
 struct HandlerCallBack {
     uint256 amount;
     uint256 status;

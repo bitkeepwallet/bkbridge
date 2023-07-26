@@ -38,7 +38,8 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         onlySender(_orderInfo.sender)
     {
         _checkSigner(_signInfo.nonce, _signInfo.signature);
-        _checkVault(_orderInfo.vaultReceiver, _orderInfo.srcToken);
+        _checkVaultReceiver(_orderInfo.vaultReceiver);
+        _checkVaultToken(_orderInfo.srcToken);
         HandlerCallBack memory _callback = BKBridgeHandler.send(_orderInfo, orderStatus, orderAmount);
         _emitEvent(_orderInfo, _callback);
     }
@@ -51,8 +52,10 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         onlySender(_orderInfo.sender)
     {
         _checkSigner(_signInfo.nonce, _signInfo.signature);
-        _checkVault(_orderInfo.vaultReceiver, _swapV1Info.path[_swapV1Info.path.length - 1]);
+        _checkVaultReceiver(_orderInfo.vaultReceiver);
+        _checkVaultToken(_swapV1Info.path[_swapV1Info.path.length - 1]);
         _checkRouter(_swapV1Info.bkSwapV1Router);
+        _checkSwapReceiver(vault, _swapV1Info.to);
         HandlerCallBack memory _callback = BKBridgeHandler.sendV1(_orderInfo, _swapV1Info, orderStatus, orderAmount);
         _emitEvent(_orderInfo, _callback);
     }
@@ -65,8 +68,10 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         onlySender(_orderInfo.sender)
     {
         _checkSigner(_signInfo.nonce, _signInfo.signature);
-        _checkVault(_orderInfo.vaultReceiver, _swapV2Info.toTokenAddress);
+        _checkVaultReceiver(_orderInfo.vaultReceiver);
+        _checkVaultToken(_swapV2Info.toTokenAddress);
         _checkRouter(_swapV2Info.bkSwapV2Router);
+        _checkSwapReceiver(vault, _swapV2Info.to);
         HandlerCallBack memory _callback = BKBridgeHandler.sendV2(_orderInfo, _swapV2Info, orderStatus, orderAmount);
         _emitEvent(_orderInfo, _callback);
     }
@@ -79,7 +84,8 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         onlyRelayer
     {
         _checkSigner(_signInfo.nonce, _signInfo.signature);
-        _checkVault(_orderInfo.vaultReceiver, _orderInfo.dstToken);
+        _checkVaultReceiver(_orderInfo.vaultReceiver);
+        _checkVaultToken(_orderInfo.dstToken);
         HandlerCallBack memory _callback = BKBridgeHandler.relay(_orderInfo, _relayAmount, orderStatus);
         _emitEvent(_orderInfo, _callback);
     }
@@ -91,8 +97,10 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         uint256 _relayAmount
     ) external payable whenNotPaused nonReentrant onlyRelayer {
         _checkSigner(_signInfo.nonce, _signInfo.signature);
-        _checkVault(_orderInfo.vaultReceiver, _swapV1Info.path[0]);
+        _checkVaultReceiver(_orderInfo.vaultReceiver);
+        _checkVaultToken(_swapV1Info.path[0]);
         _checkRouter(_swapV1Info.bkSwapV1Router);
+        _checkSwapReceiver(_orderInfo.receiver, _swapV1Info.to);
         HandlerCallBack memory _callback = BKBridgeHandler.relayV1(_orderInfo, _swapV1Info, _relayAmount, orderStatus);
         _emitEvent(_orderInfo, _callback);
     }
@@ -104,8 +112,10 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         uint256 _relayAmount
     ) external payable whenNotPaused nonReentrant onlyRelayer {
         _checkSigner(_signInfo.nonce, _signInfo.signature);
-        _checkVault(_orderInfo.vaultReceiver, _swapV2Info.fromTokenAddress);
+        _checkVaultReceiver(_orderInfo.vaultReceiver);
+        _checkVaultToken(_swapV2Info.fromTokenAddress);
         _checkRouter(_swapV2Info.bkSwapV2Router);
+        _checkSwapReceiver(_orderInfo.receiver, _swapV2Info.to);
         HandlerCallBack memory _callback = BKBridgeHandler.relayV2(_orderInfo, _swapV2Info, _relayAmount, orderStatus);
         _emitEvent(_orderInfo, _callback);
     }
