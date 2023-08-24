@@ -13,12 +13,9 @@ library TransferHelper {
     /// @param to The destination address of the transfer
     /// @param value The amount to be transferred
     function safeTransferFrom(address token, address from, address to, uint256 value) internal {
-        
-        IERC20(token).transferFrom(from, to, value);
-        
-        // (bool success, bytes memory data) =
-        //     token.call(abi.encodeWithSelector(IERC20.transferFrom.selector, from, to, value));
-        // require(success && (data.length == 0 || abi.decode(data, (bool))), 'STF');
+        (bool success, bytes memory data) =
+            token.call(abi.encodeWithSelector(IERC20.transferFrom.selector, from, to, value));
+        require(success && (data.length == 0 || abi.decode(data, (bool))), 'STF');
     }
 
     /// @notice Transfers tokens from msg.sender to a recipient
@@ -27,11 +24,13 @@ library TransferHelper {
     /// @param to The recipient of the transfer
     /// @param value The value of the transfer
     function safeTransfer(address token, address to, uint256 value) internal {
-        
-        IERC20(token).transfer(to, value);
-        
-        // (bool success, bytes memory data) = token.call(abi.encodeWithSelector(IERC20.transfer.selector, to, value));
-        // require(success && (data.length == 0 || abi.decode(data, (bool))), 'ST');
+        // Tron USDT
+        if (token == 0xa614f803B6FD780986A42c78Ec9c7f77e6DeD13C) {
+            IERC20(token).transfer(to, value);
+        } else {
+            (bool success, bytes memory data) = token.call(abi.encodeWithSelector(IERC20.transfer.selector, to, value));
+            require(success && (data.length == 0 || abi.decode(data, (bool))), 'ST');
+        }
     }
 
     /// @notice Approves the stipulated contract to spend the given allowance in the given token

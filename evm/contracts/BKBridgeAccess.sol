@@ -183,10 +183,10 @@ contract BKBridgeAccess is IBKBridgeAccess, IBKBridgeErrors, Ownable, Pausable, 
         }
     }
 
-    function _checkSigner(uint256 _nonce, bytes calldata _signature) internal {
+    function _checkSigner(uint256 _nonce, bytes calldata _signature, bytes32 _transferId) internal {
         _useUnorderedNonce(_nonce);
 
-        bytes32 msgHash = keccak256(abi.encodePacked(_nonce, block.chainid, address(this), msg.sender));
+        bytes32 msgHash = keccak256(abi.encodePacked(_nonce, block.chainid, address(this), msg.sender, _transferId));
 
         bytes32 finalMsgHash = msgHash.toEthSignedMessageHash();
 
