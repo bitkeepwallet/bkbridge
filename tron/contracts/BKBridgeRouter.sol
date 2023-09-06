@@ -38,7 +38,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         nonReentrant
         onlySender(_orderInfo.sender)
     {
-        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId);
+        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId, _orderInfo.dstChainId);
         _checkVaultReceiver(_orderInfo.vaultReceiver);
         _checkVaultToken(_orderInfo.srcToken);
         HandlerCallBack memory _callback = BKBridgeHandler.send(_orderInfo, orderStatus, orderAmount);
@@ -53,7 +53,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         nonReentrant
         onlySender(_orderInfo.sender)
     {
-        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId);
+        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId, _orderInfo.dstChainId);
         _checkVaultReceiver(_orderInfo.vaultReceiver);
         _checkVaultToken(_swapV1Info.path[_swapV1Info.path.length - 1]);
         _checkRouter(_swapV1Info.bkSwapV1Router);
@@ -70,7 +70,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         nonReentrant
         onlySender(_orderInfo.sender)
     {
-        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId);
+        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId, _orderInfo.dstChainId);
         _checkVaultReceiver(_orderInfo.vaultReceiver);
         _checkVaultToken(_swapV2Info.toTokenAddress);
         _checkRouter(_swapV2Info.bkSwapV2Router);
@@ -87,7 +87,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         nonReentrant
         onlyRelayer
     {
-        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId);
+        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId, _orderInfo.dstChainId);
         _checkVaultReceiver(_orderInfo.vaultReceiver);
         _checkVaultToken(_orderInfo.dstToken);
         HandlerCallBack memory _callback = BKBridgeHandler.relay(_orderInfo, _relayAmount, orderStatus);
@@ -100,7 +100,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         SwapV1Info calldata _swapV1Info,
         uint256 _relayAmount
     ) override external payable whenNotPaused nonReentrant onlyRelayer {
-        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId);
+        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId, _orderInfo.dstChainId);
         _checkVaultReceiver(_orderInfo.vaultReceiver);
         _checkVaultToken(_swapV1Info.path[0]);
         _checkRouter(_swapV1Info.bkSwapV1Router);
@@ -115,7 +115,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         SwapV2Info calldata _swapV2Info,
         uint256 _relayAmount
     ) override external payable whenNotPaused nonReentrant onlyRelayer {
-        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId);
+        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId, _orderInfo.dstChainId);
         _checkVaultReceiver(_orderInfo.vaultReceiver);
         _checkVaultToken(_swapV2Info.fromTokenAddress);
         _checkRouter(_swapV2Info.bkSwapV2Router);
@@ -132,7 +132,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         nonReentrant
         onlyRelayer
     {
-        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId);
+        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId, _orderInfo.dstChainId);
         HandlerCallBack memory _callback = BKBridgeHandler.cancel(_orderInfo, orderStatus);
         _emitEvent(_orderInfo, _callback);
     }
@@ -145,7 +145,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
         nonReentrant
         onlyRelayer
     {
-        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId);
+        _checkSigner(_signInfo.nonce, _signInfo.signature, _orderInfo.transferId, _orderInfo.dstChainId);
         HandlerCallBack memory _callback =
             BKBridgeHandler.refund(_orderInfo, _refundAmount, vaultToken, orderStatus, orderAmount);
         _emitEvent(_orderInfo, _callback);
@@ -158,7 +158,7 @@ contract BKBridgeRouter is IBKBridgeRouter, BKBridgeAccess {
             _orderInfo.vaultReceiver,
             _orderInfo.sender,
             _orderInfo.receiver,
-            _orderInfo.srcToken,
+            block.chainid,
             _orderInfo.dstToken,
             _orderInfo.srcChainId,
             _orderInfo.dstChainId,
