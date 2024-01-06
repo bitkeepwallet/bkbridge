@@ -1,3 +1,13 @@
+# BitKeep Bridge
+
+## About 
+The library contains a smart contract for EVM-based blockchains (Ethereum, BNB Chain, etc.), which serves as a critical part of the BitKeep Bridge order-protocol.
+
+The contract allows users to exchange tokens across different chains, such as: ETH(USDC) to BNB Chain(USDT).
+
+## Deployments 
+The protocol uses the same address on most EVMs, deployed using CREATE2 Factory, and differs in the Zksync-era chain and Tron chain, as follows:
+
 <table>
   <tr>
     <th>Network</th>
@@ -41,3 +51,6 @@
     </td>
   </tr>
 </table>
+
+## Audit 
+This protocol is completely audited by Certik, [Audit Report](https://github.com/bitkeepwallet/bkbridge/blob/main/audit/Certik%20Audit%20Report-BKBridge.pdf)
